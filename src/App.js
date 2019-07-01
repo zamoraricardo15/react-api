@@ -1,26 +1,77 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            listOfCocktails : {
+                drinks : []
+            }
+        }
+    }
+
+    retrieveCocktails(){
+        fetch("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita")
+            .then(response => {
+                if ( response.ok ){
+                    return response.json();
+                }
+                else{
+                    throw new Error("Something went wrong!");
+                }
+            })
+            .then(responseJSON => {
+                this.setState({
+                    listOfCocktails : {drinks : responseJSON.drinks}
+                });
+            })
+            .catch( err => {
+                console.log(err);
+            });
+    }
+    /*
+    componentDidMount(){
+        fetch("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita")
+            .then(response => {
+                if ( response.ok ){
+                    return response.json();
+                }
+                else{
+                    throw new Error("Something went wrong!");
+                }
+            })
+            .then(responseJSON => {
+                this.setState({
+                    listOfCocktails : {drinks : responseJSON.drinks}
+                });
+            })
+            .catch( err => {
+                console.log(err);
+            });
+    } */
+
+    render(){
+        return (
+            <div className="App">
+                <div>
+                {
+                    this.state.listOfCocktails.drinks.map((cocktail,index) => {
+                        return (
+                            <div key={index}>
+                                <h3> {cocktail.strDrink} </h3>
+                                <img src={cocktail.strDrinkThumb} />
+                            </div>
+                        )
+                    })
+                }
+                </div>
+                <button onClick={() => this.retrieveCocktails()}> Do the fetch call </button>
+            </div>
+
+        );
+    }
+
 }
 
 export default App;
