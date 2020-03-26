@@ -11,8 +11,11 @@ class App extends React.Component {
         }
     }
 
-    retrieveCocktails(){
-        fetch("https://www.thecocktaildb.com/api/json/v1/1/search.php?s=margarita")
+    retrieveCocktails(event){
+
+        event.preventDefault();
+        let searchTerm = event.target.cocktailName.value;
+        fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${searchTerm}`)
             .then(response => {
                 if ( response.ok ){
                     return response.json();
@@ -54,6 +57,11 @@ class App extends React.Component {
     render(){
         return (
             <div className="App">
+                <form onSubmit={(event) => this.retrieveCocktails(event)}>
+                    <label htmlFor="cocktailName">Type your favorite cocktail:</label>
+                    <input type="text" id="cocktailName" name="cocktailName" />
+                    <button type="submit"> Do the fetch call </button>
+                </form>
                 <div>
                 {
                     this.state.listOfCocktails.drinks.map((cocktail,index) => {
@@ -66,7 +74,6 @@ class App extends React.Component {
                     })
                 }
                 </div>
-                <button onClick={() => this.retrieveCocktails()}> Do the fetch call </button>
             </div>
 
         );
